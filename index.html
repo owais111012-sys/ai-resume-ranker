@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Resume Ranker — Bulk HR Candidate Screening &amp; Top 10 Shortlisting Platform</title>
+  <meta name="google-site-verification" content="rdLMf18SMNyPss6CLE0wuloeehNQjfDd0oz1eUJhvmU" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+
+  <!-- SEO & Open Graph Meta Tags -->
+  <meta name="description" content="Screen up to 100+ PDF, DOCX, and TXT resumes in 60 seconds and automatically extract your Top 10 deserving candidates. Free privacy-first AI resume ranker and HR recruitment knowledge hub.">
+  <meta name="keywords" content="AI resume ranker, bulk resume screening, HR candidate shortlisting tool, ATS score checker, technical recruiting playbook, Groq AI resume parser">
+  <link rel="canonical" href="https://resume-ranker-app.netlify.app/">
+  <meta property="og:title" content="AI Resume Ranker — Turn 100+ Resumes Into Your Top 10 Shortlist in Seconds">
+  <meta property="og:description" content="Explainable AI &amp; deterministic ATS bulk resume screening for HR teams, tech recruiters, and startup founders. 100% in-memory privacy and 1-click Excel export.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://resume-ranker-app.netlify.app/">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Google AdSense Verification Code -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1941533215479134" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Client-Side PDF & DOCX Parsing Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Rich Architectural SaaS Background & Glowing Mesh Orbs */
+    .saas-mesh-bg {
+      background-color: #f8fafc;
+      background-image:
+        radial-gradient(at 12% 10%, rgba(16, 185, 129, 0.14) 0px, transparent 48%),
+        radial-gradient(at 88% 14%, rgba(20, 184, 166, 0.13) 0px, transparent 45%),
+        radial-gradient(at 50% 48%, rgba(6, 182, 212, 0.08) 0px, transparent 55%),
+        radial-gradient(at 82% 85%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
+    }
+    .architectural-grid {
+      background-size: 36px 36px;
+      background-image:
+        linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+    }
+    .dark-architectural-grid {
+      background-size: 36px 36px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+    .dot-matrix-overlay {
+      background-image: radial-gradient(rgba(16, 185, 129, 0.22) 1.25px, transparent 1.25px);
+      background-size: 24px 24px;
+    }
+
+    /* Subtle Floating Orbs & Glassmorphism */
+    @keyframes floatSlow {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(14px, -16px) scale(1.04); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 0.85; }
+    }
+    .animate-float-slow { animation: floatSlow 9s ease-in-out infinite; }
+    .animate-pulse-glow { animation: pulseGlow 5s ease-in-out infinite; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+  </style>
+</head>
+<body class="saas-mesh-bg text-slate-900 min-h-screen flex flex-col selection:bg-emerald-600 selection:text-white relative overflow-x-hidden">
+
+  <!-- Fixed Ambient Background Layer (Architectural Grid + Glowing Mesh Orbs) -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+    <div class="absolute inset-0 architectural-grid"></div>
+    <div class="absolute -top-28 -left-28 w-96 h-96 rounded-full bg-emerald-400/20 blur-3xl animate-float-slow"></div>
+    <div class="absolute top-1/4 -right-28 w-[28rem] h-[28rem] rounded-full bg-teal-400/15 blur-3xl animate-float-slow" style="animation-delay: -3s;"></div>
+    <div class="absolute bottom-10 left-1/3 w-96 h-96 rounded-full bg-cyan-400/10 blur-3xl animate-pulse-glow"></div>
+  </div>
+
+  <!-- Top Trust & Announcement Bar -->
+  <div class="relative z-30 bg-slate-950 text-slate-300 text-xs py-2.5 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          ✨ 2026 Enterprise HR Suite
+        </span>
+        <span>Screen 10 to 100+ resumes in seconds with <strong class="text-white">Explainable AI &amp; Deterministic ATS</strong>.</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-4 text-[11px] text-slate-400">
+        <span class="flex items-center gap-1"><span class="text-emerald-400">●</span> 100% In-Memory Privacy (Zero Storage)</span>
+        <a href="ats-guide.html" class="hover:text-white transition">ATS Guide</a>
+        <a href="job-description-templates.html" class="hover:text-white transition">JD Templates</a>
+        <a href="interview-scorecard.html" class="hover:text-white transition">Interview Rubric</a>
+        <a href="privacy.html" class="text-emerald-400 hover:text-emerald-300 underline font-medium">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky SaaS Header with View Switcher -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="switchView('home')" class="flex items-center gap-3 text-left group cursor-pointer focus:outline-none">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white font-black text-base shadow-md shadow-emerald-600/20 group-hover:scale-105 transition">
+            AI
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 group-hover:text-emerald-600 transition">
+                AI Resume Ranker
+              </span>
+              <span class="hidden sm:inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
+                HR SaaS
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500">Bulk Candidate Screening &amp; Recruitment Intelligence</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Center Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-1 text-xs font-semibold text-slate-600">
+        <button type="button" onclick="switchView('home')" id="navHomeBtn" class="px-3 py-2 rounded-lg text-emerald-700 bg-emerald-50 font-bold transition cursor-pointer">
+          🏠 Platform Overview
+        </button>
+        <a href="#featuresSection" onclick="switchView('home')" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          Features
+        </a>
+        <a href="#workflowSection" onclick="switchView('home')" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          How It Works
+        </a>
+        <a href="#faqSection" onclick="switchView('home')" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          FAQ
+        </a>
+        <a href="ats-guide.html" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          ATS Guide
+        </a>
+        <a href="job-description-templates.html" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          JD Library
+        </a>
+        <a href="interview-scorecard.html" class="px-3 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-100 transition">
+          Scorecard
+        </a>
+      </nav>
+
+      <!-- Right Action CTA Buttons -->
+      <div class="flex items-center gap-2">
+        <!-- Mode Toggle Pill -->
+        <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
+          <button type="button" id="headerHomeTab" onclick="switchView('home')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition cursor-pointer">
+            Home Page
+          </button>
+          <button type="button" id="headerAppTab" onclick="switchView('app')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center gap-1">
+            <span>🚀 Ranker Tool</span>
+          </button>
+        </div>
+
+        <button type="button" onclick="switchView('app')" class="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm shadow-emerald-600/20 transition cursor-pointer">
+          <span>Open Ranker App →</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 1: ENTERPRISE SAAS HOME LANDING PAGE (VISIBLE FIRST BY DEFAULT)  -->
+  <!-- ===================================================================== -->
+  <div id="homeLandingView" class="relative z-10 flex-1">
+
+    <!-- 1. SaaS Hero Section with Aurora Mesh & 3D Glassmorphic Showcase -->
+    <section class="relative overflow-hidden border-b border-slate-200/80 pt-10 pb-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-b from-emerald-50/70 via-white/40 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 dot-matrix-overlay opacity-60 pointer-events-none"></div>
+      <div class="absolute top-12 left-1/2 -translate-x-1/2 w-[46rem] h-64 bg-gradient-to-r from-emerald-400/20 via-teal-400/20 to-cyan-400/20 blur-3xl rounded-full pointer-events-none"></div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+
+          <!-- Left Column: Value Proposition & Primary CTAs -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex flex-wrap items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-emerald-200 shadow-sm text-emerald-900 text-xs font-bold">
+              <span class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] uppercase tracking-wider font-extrabold">NEW v2.6</span>
+              <span>Built for HR Managers, Technical Recruiters &amp; Hiring Founders</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-[3.35rem] font-black text-slate-900 tracking-tight leading-[1.1]">
+              Turn 100+ Unsorted Resumes Into Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600">Top 10 Candidate Shortlist</span> in 60 Seconds.
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+              Stop spending 10+ hours manually opening PDFs. <strong>AI Resume Ranker</strong> combines client-side document parsing with hybrid <strong>Groq LLM reasoning and deterministic ATS skill-gap auditing</strong>—giving you an objective, bias-free candidate leaderboard and a 1-click Excel export with zero server storage.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3.5 pt-2">
+              <button type="button" onclick="switchView('app')" class="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-6 py-4 rounded-2xl text-sm sm:text-base shadow-xl shadow-emerald-600/25 ring-4 ring-emerald-500/15 transition transform hover:-translate-y-0.5 flex items-center gap-2.5 cursor-pointer">
+                <span>🚀 Launch AI Resume Ranker Tool</span>
+                <span class="text-lg">→</span>
+              </button>
+
+              <button type="button" onclick="launchAppWithDemo()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-4 rounded-2xl text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer">
+                <span>⚡ Try Instant 12-Resume Live Demo</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4">
+              <div class="glass-card border border-slate-200/90 rounded-xl px-3 py-2.5 shadow-sm flex items-center gap-2 text-xs font-bold text-slate-800">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[11px]">✓</span>
+                <span>100% Free Utility</span>
+              </div>
+              <div class="glass-card border border-slate-200/90 rounded-xl px-3 py-2.5 shadow-sm flex items-center gap-2 text-xs font-bold text-slate-800">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[11px]">✓</span>
+                <span>PDF, DOCX &amp; TXT</span>
+              </div>
+              <div class="glass-card border border-slate-200/90 rounded-xl px-3 py-2.5 shadow-sm flex items-center gap-2 text-xs font-bold text-slate-800">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[11px]">✓</span>
+                <span>Zero Server Storage</span>
+              </div>
+              <div class="glass-card border border-slate-200/90 rounded-xl px-3 py-2.5 shadow-sm flex items-center gap-2 text-xs font-bold text-slate-800">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[11px]">✓</span>
+                <span>1-Click Excel CSV</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Layered Glassmorphic Product UI Showcase Card -->
+          <div class="lg:col-span-5 relative">
+            <div class="absolute -inset-3 bg-gradient-to-r from-emerald-500/30 via-teal-500/25 to-cyan-500/30 rounded-[2rem] blur-2xl pointer-events-none"></div>
+
+            <div class="hidden sm:flex absolute -top-4 -right-3 z-20 bg-white border border-emerald-200 shadow-lg rounded-2xl px-3.5 py-2 items-center gap-2 text-xs font-extrabold text-slate-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>⚡ Groq LLM + Local PDF.js Engine</span>
+            </div>
+
+            <div class="relative bg-slate-900/95 backdrop-blur-xl rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-700/80 text-slate-100 space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                  <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                  <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold text-slate-300 ml-2">AI Shortlist Leaderboard</span>
+                </div>
+                <span class="text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                  100 Resumes → Top 10
+                </span>
+              </div>
+
+              <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-3 text-xs space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Active Job Requirement</span>
+                  <span class="text-[10px] text-slate-400 font-mono">Time: 4.2s</span>
+                </div>
+                <div class="font-semibold text-white">Senior Full-Stack Engineer (React, TypeScript, Node.js, PostgreSQL, AWS)</div>
+              </div>
+
+              <div class="space-y-2.5 text-xs">
+                <div class="bg-gradient-to-r from-emerald-950/90 to-slate-800/90 border border-emerald-500/50 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-md">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[10px]">#1</span>
+                      <span class="font-bold text-white text-sm">Aarav Sharma</span>
+                      <span class="text-[11px] text-slate-400">(5 yrs exp)</span>
+                    </div>
+                    <div class="text-[11px] text-emerald-300">✓ React · TypeScript · Node.js · PostgreSQL · AWS</div>
+                    <div class="text-[10px] text-slate-400">Skill Gaps: None — Full Stack Alignment</div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-lg font-black text-emerald-400">96%</div>
+                    <div class="text-[10px] font-semibold text-emerald-300">Eligible Fit</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/90 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-slate-700 text-slate-200 font-bold text-[10px]">#2</span>
+                      <span class="font-bold text-white text-sm">Priya Nair</span>
+                      <span class="text-[11px] text-slate-400">(6 yrs exp)</span>
+                    </div>
+                    <div class="text-[11px] text-emerald-300">✓ React · TypeScript · Node.js · Docker · AWS</div>
+                    <div class="text-[10px] text-amber-300">Probe in Interview: GraphQL</div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-lg font-black text-emerald-400">92%</div>
+                    <div class="text-[10px] font-semibold text-emerald-300">Eligible Fit</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/90 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-slate-700 text-slate-200 font-bold text-[10px]">#3</span>
+                      <span class="font-bold text-white text-sm">Rohan Verma</span>
+                      <span class="text-[11px] text-slate-400">(4 yrs exp)</span>
+                    </div>
+                    <div class="text-[11px] text-emerald-300">✓ React · Node.js · Express · PostgreSQL</div>
+                    <div class="text-[10px] text-rose-300">Missing Gap: Docker</div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-lg font-black text-teal-400">88%</div>
+                    <div class="text-[10px] font-semibold text-teal-300">Eligible Fit</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-1 flex items-center justify-between gap-2">
+                <span class="text-[11px] text-slate-400">Have a folder of resumes ready?</span>
+                <button type="button" onclick="switchView('app')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs transition cursor-pointer shadow-md">
+                  Open Ranker Workspace →
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Executive Metrics Ribbon -->
+        <div class="mt-12 lg:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-card border border-slate-200/90 rounded-2xl p-5 shadow-sm text-center">
+            <div class="text-2xl sm:text-3xl font-black text-slate-900">100+ Files</div>
+            <div class="text-xs font-semibold text-slate-500 mt-1">Bulk PDF, DOCX &amp; TXT Queue</div>
+          </div>
+          <div class="glass-card border border-slate-200/90 rounded-2xl p-5 shadow-sm text-center">
+            <div class="text-2xl sm:text-3xl font-black text-emerald-600">&lt; 60 Secs</div>
+            <div class="text-xs font-semibold text-slate-500 mt-1">To Extract Top 10 Candidates</div>
+          </div>
+          <div class="glass-card border border-slate-200/90 rounded-2xl p-5 shadow-sm text-center">
+            <div class="text-2xl sm:text-3xl font-black text-teal-600">0 Bytes</div>
+            <div class="text-xs font-semibold text-slate-500 mt-1">Stored on Any Server (100% Private)</div>
+          </div>
+          <div class="glass-card border border-slate-200/90 rounded-2xl p-5 shadow-sm text-center">
+            <div class="text-2xl sm:text-3xl font-black text-slate-900">15+ Roles</div>
+            <div class="text-xs font-semibold text-slate-500 mt-1">Pre-Built Technical JD Prompts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Core Platform Capabilities (6-Feature Bento Grid with Gradient Accents) -->
+    <section id="featuresSection" class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 space-y-12">
+      <div class="max-w-3xl mx-auto text-center space-y-3">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-3.5 py-1 rounded-full">
+          Enterprise Capabilities, Zero Bloat
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Everything HR Teams Need to Screen High-Volume Applicant Folders
+        </h2>
+        <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+          Legacy Applicant Tracking Systems cost thousands of dollars a year and reject great engineers due to rigid formatting rules. Here is how our modern architecture solves high-volume technical hiring.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            🔒
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">1. Client-Side Privacy Architecture</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Resumes contain sensitive personal data (PII). Using Mozilla's <strong>PDF.js</strong> and <strong>Mammoth.js</strong>, raw text extraction happens directly inside your browser memory. We never store, archive, or index uploaded candidate files on any database.
+          </p>
+        </div>
+
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            🧠
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">2. Hybrid Groq AI + ATS Scoring</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Combines deterministic keyword verification (programming languages, frameworks, years of experience) with ultra-low-latency <strong>Groq LLM semantic evaluation</strong> so candidates cannot game the system with hidden keyword stuffing.
+          </p>
+        </div>
+
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            🔍
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">3. Explainable Skill-Gap Auditing</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Instead of an opaque "black box" percentage, every ranked candidate card displays green <strong>Matched Skills</strong> and red <strong>Missing Skill Gaps</strong>—so recruiters know exactly what to probe during the first phone screen.
+          </p>
+        </div>
+
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-teal-500 to-emerald-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            ⚡
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">4. Smart Batching for 100+ Files</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Uploading 100 PDFs to standard web tools causes browser crashes or serverless timeouts. Our queue engine processes files in resilient batches of 5 with automatic local ATS fallback, guaranteeing 100% completion.
+          </p>
+        </div>
+
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-cyan-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            📥
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">5. 1-Click Excel (CSV) Shortlist Export</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Once your Top 10 deserving candidates are identified, export a structured spreadsheet containing ranks, match percentages, extracted emails, phone numbers, matched skills, and AI evaluation summaries.
+          </p>
+        </div>
+
+        <div class="glass-card border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-400 transition group relative overflow-hidden space-y-3">
+          <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-200 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+            📋
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900">6. Built-In JD Templates &amp; Rubrics</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Includes 15 copy-paste technical job description templates and a standardized 1-to-5 engineering interview scorecard so your hiring committee can conduct structured, bias-free technical interviews.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Dark-Mode Contrast Section: 3-Step Workflow & Enterprise Comparison -->
+    <section id="workflowSection" class="relative bg-slate-950 text-white py-16 sm:py-20 border-y border-slate-800 overflow-hidden">
+      <div class="absolute inset-0 dark-architectural-grid pointer-events-none"></div>
+      <div class="absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 left-1/4 w-96 h-96 rounded-full bg-teal-500/15 blur-3xl pointer-events-none"></div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="space-y-2.5 max-w-2xl">
+            <span class="inline-block text-xs font-extrabold uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
+              Simple 3-Step Pipeline
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-black text-white tracking-tight">
+              How to Go From 100 Raw Resumes to Your Top 10 Interview Shortlist
+            </h2>
+          </div>
+          <button type="button" onclick="switchView('app')" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold px-5 py-3.5 rounded-2xl text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition cursor-pointer">
+            Launch Ranker Workspace Now →
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 transition space-y-3 relative">
+            <div class="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-black text-xs">
+              STEP 01
+            </div>
+            <h3 class="text-base font-extrabold text-white">Define Job Requirements &amp; Mandatory Stack</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Paste your job description or load one of our built-in templates (Full-Stack Engineer, Python AI/Data, or Cloud DevOps). Specify target years of experience and core technical keywords.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 transition space-y-3 relative">
+            <div class="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-black text-xs">
+              STEP 02
+            </div>
+            <h3 class="text-base font-extrabold text-white">Drag &amp; Drop 10 to 100+ Candidate Files</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Select your entire applicant folder containing mixed <code class="font-mono text-xs bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded border border-slate-700">.pdf</code>, <code class="font-mono text-xs bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded border border-slate-700">.docx</code>, and <code class="font-mono text-xs bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded border border-slate-700">.txt</code> files. Client-side parsers normalize multi-column layouts automatically.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 transition space-y-3 relative">
+            <div class="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-black text-xs">
+              STEP 03
+            </div>
+            <h3 class="text-base font-extrabold text-white">Inspect Skill Gaps &amp; Export Top 10 to Excel</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Review your ranked leaderboard sorted from highest to lowest match score. Star your favorite finalists, inspect full extracted resume text, and download your CSV shortlist for hiring managers.
+            </p>
+          </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="pt-4">
+          <div class="overflow-x-auto rounded-2xl border border-slate-800 shadow-2xl">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-900 text-slate-200 font-bold border-b border-slate-800">
+                  <th class="p-4">Screening Dimension</th>
+                  <th class="p-4">Manual Resume Reading</th>
+                  <th class="p-4">Legacy Keyword ATS</th>
+                  <th class="p-4 bg-emerald-600 text-slate-950 font-black">AI Resume Ranker (2026)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 bg-slate-900/70 text-slate-300">
+                <tr>
+                  <td class="p-4 font-bold text-white">Time to Screen 100 Resumes</td>
+                  <td class="p-4">4 to 6 Hours (High Fatigue)</td>
+                  <td class="p-4">15 Minutes Setup</td>
+                  <td class="p-4 font-bold text-emerald-300 bg-emerald-950/50">Under 60 Seconds</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold text-white">Evaluation Method</td>
+                  <td class="p-4">Subjective 45-sec visual scan</td>
+                  <td class="p-4">Rigid exact-string matching</td>
+                  <td class="p-4 font-bold text-emerald-300 bg-emerald-950/50">Hybrid Groq LLM + Weighted ATS</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold text-white">Data Privacy &amp; Storage</td>
+                  <td class="p-4">Local downloads folder</td>
+                  <td class="p-4">Stored indefinitely on vendor cloud</td>
+                  <td class="p-4 font-bold text-emerald-300 bg-emerald-950/50">100% Ephemeral In-Memory (Zero Storage)</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold text-white">Skill-Gap Transparency</td>
+                  <td class="p-4">Requires manual note-taking</td>
+                  <td class="p-4">Opaque black-box score</td>
+                  <td class="p-4 font-bold text-emerald-300 bg-emerald-950/50">Explicit Matched &amp; Missing Skill Tags</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Comprehensive HR Recruitment Playbook, FAQs & Editorial Documentation -->
+    <section id="playbookSection" class="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-16 space-y-10">
+      <article class="glass-card border border-slate-200/90 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-md space-y-8">
+        <div class="border-b border-slate-200 pb-6 space-y-3">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-3.5 py-1 rounded-full">
+            📖 Official 2026 Recruitment Playbook &amp; Editorial Guide
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            Best Practices for High-Volume Technical Hiring &amp; Bias Reduction
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">
+            Authored by the AI Resume Ranker Engineering &amp; HR Advisory Team · Reading time: 9 minutes
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 text-slate-700 text-sm leading-relaxed">
+          <div class="lg:col-span-8 space-y-6">
+            <h3 class="text-lg font-extrabold text-slate-900">Why Automated Pre-Screening Must Remain Human-Centered</h3>
+            <p>
+              Automated resume tools should never be used to make final hiring rejections without human oversight. Instead, the primary operational goal of bulk candidate ranking is <strong>reduction of cognitive fatigue</strong>. By surfacing the top 10% to 15% of qualified applicants into an organized leaderboard, hiring managers can devote their attention to conducting deep, structured interviews with high-potential engineers.
+            </p>
+
+            <h3 class="text-lg font-extrabold text-slate-900">Eliminating Formatting Bias in Technical Resumes</h3>
+            <p>
+              Traditional enterprise ATS platforms frequently fail when engineers format their CVs in LaTeX, Markdown, or clean single-column Word documents using non-standard section headers. Our browser-based extraction engine normalizes document structure, converting all input files into clean UTF-8 text before evaluation. This ensures that a candidate who prioritizes clean typography is evaluated entirely on their technical merit.
+            </p>
+
+            <h3 class="text-lg font-extrabold text-slate-900">Using Skill-Gap Tags for Targeted Interviewing</h3>
+            <p>
+              When reviewing your Top 10 candidate cards, pay close attention to the red <strong>Missing Skills / Gaps</strong> tags. If an applicant scores 88% but lacks experience with a secondary tool like Docker or Redis, your phone screen can immediately pivot to verifying their adaptability: <em>"We see strong PostgreSQL and Node.js work on your resume; have you worked with containerized microservices in production?"</em>
+            </p>
+          </div>
+
+          <!-- FAQ Accordion Sidebar -->
+          <div id="faqSection" class="lg:col-span-4 space-y-6">
+            <div class="bg-slate-900 text-white rounded-2xl p-6 space-y-4 shadow-lg">
+              <h3 class="text-sm font-extrabold text-emerald-400 uppercase tracking-wider">❓ Frequently Asked Questions</h3>
+              
+              <details class="group border-b border-slate-800 pb-3">
+                <summary class="font-bold text-xs sm:text-sm cursor-pointer flex items-center justify-between">
+                  <span>Are candidate files saved on a server?</span>
+                  <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+                </summary>
+                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                  Never. Text extraction runs locally in your browser, and AI evaluation is performed ephemerally in-memory. We do not store or archive resumes.
+                </p>
+              </details>
+
+              <details class="group border-b border-slate-800 pb-3">
+                <summary class="font-bold text-xs sm:text-sm cursor-pointer flex items-center justify-between">
+                  <span>How many resumes can I upload at once?</span>
+                  <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+                </summary>
+                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                  You can upload 1 to 100+ files simultaneously. Our batching queue processes them in safe increments to prevent browser or server timeouts.
+                </p>
+              </details>
+
+              <details class="group pb-1">
+                <summary class="font-bold text-xs sm:text-sm cursor-pointer flex items-center justify-between">
+                  <span>Is this platform really free?</span>
+                  <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+                </summary>
+                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                  Yes! AI Resume Ranker is 100% free to use with no paywalls, credit cards, or mandatory account signups.
+                </p>
+              </details>
+            </div>
+
+            <!-- Dedicated HR Resource Pages Card -->
+            <div class="bg-emerald-950 text-white rounded-2xl p-6 space-y-4 shadow-lg">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-400">📚 Complete HR Documentation</div>
+              <h4 class="text-base font-extrabold">Explore Our Multi-Page Recruitment Guides</h4>
+              <ul class="space-y-2.5 text-xs">
+                <li>
+                  <a href="ats-guide.html" class="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 transition font-semibold">
+                    <span>1. How AI &amp; ATS Scoring Works in 2026</span>
+                    <span>→</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="job-description-templates.html" class="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 transition font-semibold">
+                    <span>2. 15 Technical Job Description Templates</span>
+                    <span>→</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="interview-scorecard.html" class="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 transition font-semibold">
+                    <span>3. Top-10 Structured Interview Scorecard</span>
+                    <span>→</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="about.html" class="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 transition font-semibold">
+                    <span>4. About Our Architecture &amp; Contact</span>
+                    <span>→</span>
+                  </a>
+                </li>
+              </ul>
+              <button type="button" onclick="switchView('app')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs transition cursor-pointer">
+                🚀 Launch Resume Ranker Workspace
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 2: INTERACTIVE AI RESUME RANKER WORKSPACE (OPENS ON CLICK)       -->
+  <!-- ===================================================================== -->
+  <div id="rankerWorkspaceView" class="relative z-10 hidden flex-1">
+    <!-- Workspace Sub-Header Bar -->
+    <div class="bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="switchView('home')" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-3 py-1.5 rounded-xl transition cursor-pointer">
+            <span>← Back to Platform Home &amp; Overview</span>
+          </button>
+          <span class="text-xs font-extrabold text-slate-900 hidden sm:inline">⚡ Live Bulk Candidate Screening Workspace</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="workspaceTryDemoTopBtn" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs transition cursor-pointer">
+            ⚡ Load 12 Sample Engineer Resumes
+          </button>
+          <a href="job-description-templates.html" class="text-xs font-semibold text-emerald-700 hover:underline hidden sm:inline">
+            Need a JD Prompt? Browse 15 Templates →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Ranker Tool Grid -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Job Requirements + Bulk Resume Upload -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h2 class="text-base font-bold text-slate-900">1. Configure Job &amp; Resumes</h2>
+                <p class="text-xs text-slate-500">Define requirements or load a preset role template</p>
+              </div>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">Step 1 of 2</span>
+            </div>
+
+            <!-- Quick Role Templates -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-600">Quick HR Job Templates</label>
+                <button id="clearJobBtn" type="button" class="text-[11px] text-slate-400 hover:text-slate-600 cursor-pointer">Clear text</button>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" data-template="fullstack" class="job-template-btn text-left p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition cursor-pointer">
+                  <div class="text-xs font-bold text-slate-800 truncate">💻 Full-Stack Eng</div>
+                  <div class="text-[10px] text-slate-500 truncate">React, Node, AWS, 3+ yrs</div>
+                </button>
+                <button type="button" data-template="data" class="job-template-btn text-left p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition cursor-pointer">
+                  <div class="text-xs font-bold text-slate-800 truncate">🤖 Python AI / Data</div>
+                  <div class="text-[10px] text-slate-500 truncate">Python, SQL, ML, PyTorch</div>
+                </button>
+                <button type="button" data-template="devops" class="job-template-btn text-left p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition cursor-pointer">
+                  <div class="text-xs font-bold text-slate-800 truncate">☁️ Cloud DevOps</div>
+                  <div class="text-[10px] text-slate-500 truncate">Docker, K8s, CI/CD, Linux</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Job Requirements Textarea -->
+            <div>
+              <label for="jobDesc" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                Job Description &amp; Mandatory Skills <span class="text-rose-500">*</span>
+              </label>
+              <textarea id="jobDesc" rows="5" placeholder="Example: Looking for a Senior Software Engineer with 3+ years of experience in React, TypeScript, Node.js, PostgreSQL, and AWS. Must have strong system design and API development skills..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition custom-scrollbar"></textarea>
+            </div>
+
+            <!-- Shortlist Limit & Evaluation Mode Controls -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="topNSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Shortlist Output Size
+                </label>
+                <select id="topNSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-600">
+                  <option value="10" selected>🏆 Top 10 Deserving Candidates</option>
+                  <option value="5">⭐ Top 5 Finalists Only</option>
+                  <option value="25">📋 Top 25 Candidates</option>
+                  <option value="999">📂 Show All Ranked Resumes</option>
+                </select>
+              </div>
+              <div>
+                <label for="scoringModeSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Evaluation Engine
+                </label>
+                <select id="scoringModeSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-600">
+                  <option value="hybrid" selected>🧠 Groq AI + Smart ATS Fallback</option>
+                  <option value="fast">⚡ Instant Local ATS (100+ Files)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Bulk Resume Drag & Drop Upload Zone -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Upload Candidate Resumes (1 to 100+ Files) <span class="text-rose-500">*</span>
+                </label>
+                <span id="fileQueueBadge" class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md hidden">0 files ready</span>
+              </div>
+
+              <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50/70 hover:bg-emerald-50/30 rounded-2xl p-5 text-center transition cursor-pointer relative">
+                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                <div class="space-y-1.5 pointer-events-none">
+                  <div class="w-10 h-10 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">
+                    📂
+                  </div>
+                  <p class="text-xs sm:text-sm font-semibold text-slate-800">
+                    Drag &amp; drop up to 100+ resumes here, or <span class="text-emerald-600 underline">browse files</span>
+                  </p>
+                  <p class="text-[11px] text-slate-500">
+                    Supports bulk selection of <strong>PDF</strong>, <strong>DOCX (Word)</strong>, and <strong>TXT</strong> files
+                  </p>
+                </div>
+              </div>
+
+              <!-- Queued File List Preview -->
+              <div id="queuedFilesContainer" class="mt-3 hidden space-y-2">
+                <div class="flex items-center justify-between text-xs text-slate-600">
+                  <span id="queuedFilesSummary" class="font-semibold">Selected Resumes:</span>
+                  <button id="clearFilesBtn" type="button" class="text-rose-600 hover:text-rose-700 font-semibold cursor-pointer">Remove All</button>
+                </div>
+                <div id="queuedFilesList" class="max-h-36 overflow-y-auto custom-scrollbar bg-slate-50 border border-slate-200 rounded-xl p-2 space-y-1 text-xs"></div>
+              </div>
+            </div>
+
+            <!-- Progress Bar Container -->
+            <div id="progressContainer" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span id="progressStatusText" class="font-semibold text-slate-800">Reading resumes...</span>
+                <span id="progressPercentText" class="font-bold text-emerald-700">0%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="progressBarFill" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <p class="text-[11px] text-slate-500">Smart batching prevents API timeouts even on 100+ resumes.</p>
+            </div>
+
+            <!-- Primary Action Buttons -->
+            <div class="space-y-2.5 pt-1">
+              <button id="analyzeBtn" type="button" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer text-sm">
+                <span>🚀 Rank Resumes &amp; Extract Top Candidates</span>
+              </button>
+              <button id="loadDemoSidebarBtn" type="button" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer text-xs">
+                <span>⚡ Don't have files handy? Test with 12 Sample Engineer Resumes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Leaderboard & Shortlist Results -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- Empty / Welcome State Card -->
+          <div id="emptyResultsState" class="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm space-y-4">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-2xl">
+              📊
+            </div>
+            <div class="max-w-md mx-auto space-y-1.5">
+              <h2 class="text-lg font-bold text-slate-900">Your Ranked Candidate Leaderboard Will Appear Here</h2>
+              <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                Upload your candidate resumes on the left (or click <strong>"Test with 12 Sample Engineer Resumes"</strong>) to automatically score applicants, highlight matched &amp; missing skills, and export your Top 10 shortlist to Excel.
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto pt-2 text-left">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-xs font-bold text-slate-800">1. Smart Batching</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Processes 10 to 100+ resumes without crashing or hitting AI token limits.</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-xs font-bold text-slate-800">2. Skill Gap Audit</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Pinpoints exact matched keywords and missing requirements per applicant.</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-xs font-bold text-slate-800">3. 1-Click Excel CSV</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Download candidate scores, emails, and phone numbers for interviews.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Populated Results Dashboard -->
+          <div id="resultsDashboard" class="hidden space-y-5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total Screened</div>
+                <div id="kpiTotalScreened" class="text-2xl font-extrabold text-slate-900 mt-1">0</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Resumes parsed</div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Top 10 Avg Match</div>
+                <div id="kpiAvgScore" class="text-2xl font-extrabold text-emerald-600 mt-1">0%</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Shortlist quality</div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Eligible Fit (≥75%)</div>
+                <div id="kpiEligibleCount" class="text-2xl font-extrabold text-teal-600 mt-1">0</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Ready for interview</div>
+              </div>
+              <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">HR Time Saved</div>
+                <div id="kpiTimeSaved" class="text-2xl font-extrabold text-amber-600 mt-1">0m</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Est. manual reading</div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 id="leaderboardHeading" class="text-base font-extrabold text-slate-900">🏆 Top 10 Deserving Candidates</h3>
+                  <p id="leaderboardSubheading" class="text-xs text-slate-500">Ranked from highest to lowest role alignment</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button id="exportCsvBtn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-xl text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                    <span>📥 Export Shortlist to Excel (CSV)</span>
+                  </button>
+                  <button id="copySummaryBtn" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer">
+                    <span>📋 Copy Summary</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button type="button" data-filter="all" class="status-filter-btn bg-slate-900 text-white text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition">
+                    All Shown
+                  </button>
+                  <button type="button" data-filter="Eligible" class="status-filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition">
+                    ✅ Eligible (≥75%)
+                  </button>
+                  <button type="button" data-filter="Potential Fit" class="status-filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition">
+                    ⚡ Potential (50–74%)
+                  </button>
+                  <button type="button" data-filter="shortlisted" class="status-filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition">
+                    ⭐ Starred (<span id="starredCountBadge">0</span>)
+                  </button>
+                </div>
+
+                <div class="flex items-center gap-2 flex-1 sm:flex-initial justify-end">
+                  <input id="candidateSearchInput" type="text" placeholder="Search name or skill..." class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 w-36 sm:w-44">
+                  <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
+                    <button id="viewCardsBtn" type="button" class="px-2 py-1 text-[11px] font-semibold rounded-md bg-white shadow-sm text-slate-800 cursor-pointer">Cards</button>
+                    <button id="viewTableBtn" type="button" class="px-2 py-1 text-[11px] font-semibold rounded-md text-slate-500 hover:text-slate-800 cursor-pointer">Table</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="candidateCardsContainer" class="space-y-3"></div>
+
+            <div id="candidateTableContainer" class="hidden bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                      <th class="py-3 px-4">Rank</th>
+                      <th class="py-3 px-4">Candidate</th>
+                      <th class="py-3 px-4 text-right">Match</th>
+                      <th class="py-3 px-4">Status</th>
+                      <th class="py-3 px-4">Matched Skills</th>
+                      <th class="py-3 px-4">Missing Gaps</th>
+                      <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidateTableBody" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Shared Multi-Link SaaS Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-10 px-4 text-xs text-slate-600">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pb-8 border-b border-slate-100">
+      <div class="space-y-2.5">
+        <div class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center text-[11px] font-black">AI</span>
+          <span>AI Resume Ranker</span>
+        </div>
+        <p class="text-slate-500 leading-relaxed">
+          Free AI-powered bulk resume screening and candidate shortlisting platform built for HR professionals, technical recruiters, and startup founders.
+        </p>
+      </div>
+      <div class="space-y-2">
+        <div class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Platform &amp; Guides</div>
+        <ul class="space-y-1.5">
+          <li><button type="button" onclick="switchView('home')" class="hover:text-emerald-600 cursor-pointer">Platform Overview (Home)</button></li>
+          <li><button type="button" onclick="switchView('app')" class="hover:text-emerald-600 font-semibold text-emerald-700 cursor-pointer">Launch Bulk Resume Ranker Tool</button></li>
+          <li><a href="ats-guide.html" class="hover:text-emerald-600">How AI &amp; ATS Scoring Works</a></li>
+          <li><a href="job-description-templates.html" class="hover:text-emerald-600">15 Technical JD Templates</a></li>
+          <li><a href="interview-scorecard.html" class="hover:text-emerald-600">Top-10 Interview Scorecard</a></li>
+        </ul>
+      </div>
+      <div class="space-y-2">
+        <div class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Company &amp; Legal</div>
+        <ul class="space-y-1.5">
+          <li><a href="about.html" class="hover:text-emerald-600">About Us &amp; Methodology</a></li>
+          <li><a href="privacy.html" class="hover:text-emerald-600">Privacy Policy (Zero Storage)</a></li>
+          <li><a href="terms.html" class="hover:text-emerald-600">Terms of Service</a></li>
+          <li><a href="sitemap.xml" class="hover:text-emerald-600">XML Sitemap</a></li>
+        </ul>
+      </div>
+      <div class="space-y-2">
+        <div class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Support &amp; Contact</div>
+        <p class="text-slate-500">Questions, partnerships, or direct sponsorship inquiries:</p>
+        <p><a href="mailto:owais111012@gmail.com" class="font-bold text-emerald-700 underline">owais111012@gmail.com</a></p>
+        <div class="pt-1">
+          <a href="https://rzp.io/rzp/gMIUYEEw" target="_blank" rel="noopener noreferrer" class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold px-3.5 py-2 rounded-xl text-[11px] shadow-sm transition">
+            ☕ Support Developer via Razorpay
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto pt-5 flex flex-wrap items-center justify-between gap-2 text-slate-400">
+      <span>© 2026 AI Resume Ranker. All rights reserved.</span>
+      <span>100% Client-Side PDF/DOCX Parsing · Zero Candidate Data Storage</span>
+    </div>
+  </footer>
+
+  <!-- Resume Inspector Modal -->
+  <div id="resumeModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 id="modalCandidateTitle" class="text-base font-bold text-slate-900">Candidate Resume Preview</h3>
+          <p id="modalCandidateMeta" class="text-xs text-slate-500">Extracted Text &amp; Matched Keywords</p>
+        </div>
+        <button id="closeResumeModalBtn" type="button" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold text-sm cursor-pointer">✕</button>
+      </div>
+      <div class="p-5 overflow-y-auto custom-scrollbar space-y-4 text-xs text-slate-700 flex-1">
+        <div id="modalSkillsSummary" class="flex flex-wrap gap-1.5"></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap" id="modalResumeBody"></div>
+      </div>
+      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        <span class="text-[11px] text-slate-500">Matched job keywords are shown above.</span>
+        <button id="closeResumeModalBottomBtn" type="button" class="bg-slate-900 text-white font-semibold px-4 py-1.5 rounded-xl text-xs cursor-pointer">Close Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Application Logic & View Controller -->
+  <script>
+    // View Switcher (Home Landing Page vs. Ranker Workspace)
+    function switchView(target) {
+      const homeView = document.getElementById("homeLandingView");
+      const appView = document.getElementById("rankerWorkspaceView");
+      const headerHomeTab = document.getElementById("headerHomeTab");
+      const headerAppTab = document.getElementById("headerAppTab");
+
+      if (target === "app") {
+        homeView.classList.add("hidden");
+        appView.classList.remove("hidden");
+        headerAppTab.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-sm transition cursor-pointer flex items-center gap-1";
+        headerHomeTab.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition cursor-pointer";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        appView.classList.add("hidden");
+        homeView.classList.remove("hidden");
+        headerHomeTab.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition cursor-pointer";
+        headerAppTab.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center gap-1";
+      }
+    }
+
+    function launchAppWithDemo() {
+      switchView("app");
+      loadInstantDemo();
+    }
+
+    const JOB_TEMPLATES = {
+      fullstack: `Role: Senior Full-Stack Software Engineer (3+ Years Experience)\nMandatory Skills: React, TypeScript, Node.js, Express, PostgreSQL, REST APIs, AWS, Docker, Git, System Design.\nResponsibilities: Build scalable web applications, design backend microservices, mentor junior engineers, and optimize database performance.`,
+      data: `Role: Python AI & Data Engineer (2+ Years Experience)\nMandatory Skills: Python, SQL, PyTorch, Machine Learning, FastAPI, Pandas, LLM APIs, RAG, Docker, AWS.\nResponsibilities: Build production AI pipelines, fine-tune and deploy LLM microservices, and maintain scalable data warehouses.`,
+      devops: `Role: Senior Cloud & DevOps Engineer (3+ Years Experience)\nMandatory Skills: AWS, Kubernetes, Docker, Terraform, CI/CD, GitHub Actions, Linux, Prometheus, Grafana, Python, Bash.\nResponsibilities: Automate cloud infrastructure, manage high-availability Kubernetes clusters, and maintain zero-downtime deployment pipelines.`
+    };
+
+    const DEMO_RESUMES = [
+      { name: "Aarav_Sharma_Senior_FullStack.pdf", text: "Aarav Sharma | Senior Full-Stack Engineer | Email: aarav.sharma@devmail.in | Phone: +91 98201 44510 | Bengaluru\nExperience: 5 Years in Full-Stack Web Development.\nSkills: React, TypeScript, Next.js, Node.js, Express, PostgreSQL, Redis, AWS (EC2, S3, Lambda), Docker, Git, System Design, GraphQL, REST APIs, CI/CD.\nSummary: Led a team of 6 engineers building high-traffic SaaS dashboards handling 2M+ daily requests. Reduced PostgreSQL query latency by 48%." },
+      { name: "Priya_Nair_Staff_Engineer.pdf", text: "Priya Nair | Lead Software Engineer | Email: priya.nair@techmail.com | Phone: +91 98450 11223 | Bengaluru\nExperience: 6 Years in Distributed Systems & Web Apps.\nSkills: React, TypeScript, Node.js, NestJS, PostgreSQL, MongoDB, AWS, Docker, Kubernetes, System Design, Microservices, REST APIs, Git.\nSummary: Architected multi-tenant cloud platform on AWS & Node.js. Mentored 10+ junior developers and spearheaded React + TypeScript migration." },
+      { name: "Rohan_Verma_FullStack_Dev.docx", text: "Rohan Verma | Full Stack Developer | Email: rohan.v@workmail.in | Phone: +91 97112 88901 | Pune\nExperience: 4 Years in Software Engineering.\nSkills: React, JavaScript, TypeScript, Node.js, Express, PostgreSQL, MySQL, AWS, Git, REST APIs, Tailwind CSS.\nSummary: Built B2B fintech portals using React and Node.js. Integrated automated testing and REST API gateways." },
+      { name: "Sneha_Patel_Software_Engineer.pdf", text: "Sneha Patel | Software Engineer II | Email: sneha.patel@coder.io | Phone: +91 99001 33421 | Hyderabad\nExperience: 3.5 Years in Web Application Development.\nSkills: React, TypeScript, Node.js, Express, PostgreSQL, Docker, Git, REST APIs, Redux.\nSummary: Developed customer-facing analytics modules in React & TypeScript and maintained Node.js backend services." },
+      { name: "Vikram_Menon_Backend_Cloud.pdf", text: "Vikram Menon | Backend & Cloud Engineer | Email: vikram.menon@clouddev.in | Phone: +91 98119 77320 | Chennai\nExperience: 4 Years in Backend Architecture.\nSkills: Node.js, Express, TypeScript, PostgreSQL, AWS, Docker, Kubernetes, System Design, REST APIs, Git, Python.\nSummary: Specialized in high-throughput Node.js APIs, AWS serverless infrastructure, and PostgreSQL performance tuning." },
+      { name: "Ananya_Gupta_Frontend_React.docx", text: "Ananya Gupta | Senior Frontend Engineer | Email: ananya.g@designcode.in | Phone: +91 96500 21980 | Delhi NCR\nExperience: 3 Years in Frontend Engineering.\nSkills: React, TypeScript, Next.js, Tailwind CSS, GraphQL, REST APIs, Git, Figma, Jest, Node.js.\nSummary: Delivered accessible, mobile-first React + TypeScript applications with 99+ Lighthouse performance scores." },
+      { name: "Karthik_Rao_Python_AI_Eng.pdf", text: "Karthik Rao | AI & Backend Engineer | Email: karthik.rao@aimail.in | Phone: +91 94480 55671 | Bengaluru\nExperience: 3 Years in AI & Backend Systems.\nSkills: Python, FastAPI, SQL, PostgreSQL, PyTorch, Machine Learning, LLM APIs, RAG, Docker, AWS, Git, REST APIs.\nSummary: Built production RAG pipelines and REST APIs using Python, PostgreSQL, Docker, and AWS." },
+      { name: "Meera_Krishnan_Mid_FullStack.pdf", text: "Meera Krishnan | Full-Stack Engineer | Email: meera.k@webstack.in | Phone: +91 98802 66109 | Kochi\nExperience: 2.5 Years in Web Development.\nSkills: React, Node.js, Express, MongoDB, PostgreSQL, JavaScript, Git, REST APIs, Docker.\nSummary: Full-stack engineer experienced in building e-commerce checkouts and Node.js REST microservices." },
+      { name: "Zayd_Khan_DevOps_Platform.txt", text: "Zayd Khan | DevOps & Platform Engineer | Email: zayd.khan@opscloud.in | Phone: +91 99204 88123 | Mumbai\nExperience: 4 Years in Cloud & DevOps.\nSkills: AWS, Docker, Kubernetes, Terraform, CI/CD, GitHub Actions, Linux, Python, Bash, Git, PostgreSQL.\nSummary: Managed AWS infrastructure and Docker/Kubernetes deployments for 40+ microservices." },
+      { name: "Divya_Deshmukh_Junior_Web.pdf", text: "Divya Deshmukh | Associate Web Developer | Email: divya.d@freshers.in | Phone: +91 97654 10922 | Nagpur\nExperience: 1.5 Years in Frontend & Backend.\nSkills: React, JavaScript, Node.js, Express, MySQL, Git, HTML, CSS, REST APIs.\nSummary: Built internal HR portals and dashboard widgets using React and Express." },
+      { name: "Siddharth_Joshi_Java_Developer.docx", text: "Siddharth Joshi | Java Backend Developer | Email: sid.joshi@enterprisedev.in | Phone: +91 98230 99412 | Pune\nExperience: 3 Years in Enterprise Software.\nSkills: Java, Spring Boot, Hibernate, PostgreSQL, Docker, AWS, Git, REST APIs, Microservices.\nSummary: Developed banking microservices in Java Spring Boot with PostgreSQL and AWS." },
+      { name: "Neha_Kapoor_UI_Designer.pdf", text: "Neha Kapoor | UI/UX Product Designer | Email: neha.kapoor@studio.in | Phone: +91 98101 43210 | Gurugram\nExperience: 2 Years in Product Design.\nSkills: Figma, Adobe XD, Wireframing, HTML, CSS, Basic React, Design Systems.\nSummary: Designed B2B SaaS workflows and component libraries." }
+    ];
+
+    const KNOWN_TECH_KEYWORDS = [
+      "react", "typescript", "javascript", "node.js", "nodejs", "express", "nestjs", "next.js", "nextjs",
+      "python", "java", "spring boot", "c++", "c#", "golang", "go", "rust", "php", "ruby",
+      "postgresql", "postgres", "mysql", "mongodb", "redis", "sql", "graphql", "rest api", "rest apis",
+      "aws", "azure", "gcp", "docker", "kubernetes", "k8s", "terraform", "ci/cd", "github actions", "jenkins",
+      "linux", "git", "system design", "microservices", "machine learning", "pytorch", "tensorflow",
+      "pandas", "fastapi", "flask", "django", "llm", "rag", "tailwind", "html", "css", "redux", "figma"
+    ];
+
+    let queuedFiles = [];
+    let rankedCandidates = [];
+    let activeStatusFilter = "all";
+    let shortlistedIds = new Set();
+
+    try {
+      const saved = localStorage.getItem("hr_shortlisted_ids");
+      if (saved) shortlistedIds = new Set(JSON.parse(saved));
+    } catch (e) {}
+
+    const jobDescEl = document.getElementById("jobDesc");
+    const topNSelect = document.getElementById("topNSelect");
+    const scoringModeSelect = document.getElementById("scoringModeSelect");
+    const fileInput = document.getElementById("fileInput");
+    const dropZone = document.getElementById("dropZone");
+    const fileQueueBadge = document.getElementById("fileQueueBadge");
+    const queuedFilesContainer = document.getElementById("queuedFilesContainer");
+    const queuedFilesSummary = document.getElementById("queuedFilesSummary");
+    const queuedFilesList = document.getElementById("queuedFilesList");
+    const clearFilesBtn = document.getElementById("clearFilesBtn");
+    const clearJobBtn = document.getElementById("clearJobBtn");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+
+    const progressContainer = document.getElementById("progressContainer");
+    const progressStatusText = document.getElementById("progressStatusText");
+    const progressPercentText = document.getElementById("progressPercentText");
+    const progressBarFill = document.getElementById("progressBarFill");
+
+    const emptyResultsState = document.getElementById("emptyResultsState");
+    const resultsDashboard = document.getElementById("resultsDashboard");
+    const kpiTotalScreened = document.getElementById("kpiTotalScreened");
+    const kpiAvgScore = document.getElementById("kpiAvgScore");
+    const kpiEligibleCount = document.getElementById("kpiEligibleCount");
+    const kpiTimeSaved = document.getElementById("kpiTimeSaved");
+    const leaderboardHeading = document.getElementById("leaderboardHeading");
+    const candidateCardsContainer = document.getElementById("candidateCardsContainer");
+    const candidateTableContainer = document.getElementById("candidateTableContainer");
+    const candidateTableBody = document.getElementById("candidateTableBody");
+    const candidateSearchInput = document.getElementById("candidateSearchInput");
+    const starredCountBadge = document.getElementById("starredCountBadge");
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      const colors = {
+        success: "bg-emerald-900 text-white border-emerald-700",
+        error: "bg-rose-900 text-white border-rose-700",
+        info: "bg-slate-900 text-white border-slate-700"
+      };
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-lg text-xs font-semibold flex items-center justify-between gap-3 transition-all duration-300 ${colors[type] || colors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 3600);
+    }
+
+    function updateFileQueueUI() {
+      const count = queuedFiles.length;
+      if (count === 0) {
+        fileQueueBadge.classList.add("hidden");
+        queuedFilesContainer.classList.add("hidden");
+        queuedFilesList.innerHTML = "";
+        return;
+      }
+      fileQueueBadge.textContent = `${count} resume${count > 1 ? "s" : ""} ready`;
+      fileQueueBadge.classList.remove("hidden");
+      queuedFilesContainer.classList.remove("hidden");
+      queuedFilesSummary.textContent = `Queued Resumes (${count}):`;
+
+      queuedFilesList.innerHTML = queuedFiles.map((item, idx) => {
+        const ext = item.name.split(".").pop().toUpperCase();
+        return `
+          <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-2 truncate pr-2">
+              <span class="px-1.5 py-0.5 text-[10px] font-bold rounded bg-emerald-50 text-emerald-700 border border-emerald-200">${ext}</span>
+              <span class="truncate font-medium text-slate-700">${escapeHtml(item.name)}</span>
+            </div>
+            <button type="button" data-remove-idx="${idx}" class="remove-file-btn text-slate-400 hover:text-rose-600 font-bold px-1 cursor-pointer">✕</button>
+          </div>
+        `;
+      }).join("");
+
+      queuedFilesList.querySelectorAll(".remove-file-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = parseInt(btn.getAttribute("data-remove-idx"), 10);
+          queuedFiles.splice(i, 1);
+          updateFileQueueUI();
+        });
+      });
+    }
+
+    fileInput.addEventListener("change", (e) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+      files.forEach(f => queuedFiles.push({ name: f.name, size: f.size, fileObj: f, presetText: null }));
+      fileInput.value = "";
+      updateFileQueueUI();
+      showToast(`Added ${files.length} resume file${files.length > 1 ? "s" : ""} to queue.`, "success");
+    });
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-emerald-500", "bg-emerald-50/40");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-emerald-500", "bg-emerald-50/40");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-emerald-500", "bg-emerald-50/40");
+      const files = Array.from(e.dataTransfer.files || []).filter(f => /\.(pdf|docx|txt)$/i.test(f.name));
+      if (files.length === 0) {
+        showToast("Please drop PDF, DOCX, or TXT files.", "error");
+        return;
+      }
+      files.forEach(f => queuedFiles.push({ name: f.name, size: f.size, fileObj: f, presetText: null }));
+      updateFileQueueUI();
+      showToast(`Added ${files.length} resume${files.length > 1 ? "s" : ""} for screening.`, "success");
+    });
+
+    clearFilesBtn.addEventListener("click", () => {
+      queuedFiles = [];
+      updateFileQueueUI();
+      showToast("Cleared queued resume files.", "info");
+    });
+
+    clearJobBtn.addEventListener("click", () => {
+      jobDescEl.value = "";
+      jobDescEl.focus();
+    });
+
+    document.querySelectorAll(".job-template-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-template");
+        if (JOB_TEMPLATES[key]) {
+          jobDescEl.value = JOB_TEMPLATES[key];
+          showToast("Loaded role template into job requirements.", "info");
+        }
+      });
+    });
+
+    async function extractTextFromQueueItem(item) {
+      if (item.presetText) return item.presetText;
+      const file = item.fileObj;
+      const fileName = file.name.toLowerCase();
+
+      if (fileName.endsWith(".txt")) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(new Error("Failed to read TXT file"));
+          reader.readAsText(file);
+        });
+      }
+
+      if (fileName.endsWith(".docx")) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            try {
+              const arrayBuffer = event.target.result;
+              const result = await mammoth.extractRawText({ arrayBuffer });
+              resolve(result.value || "No readable text found in DOCX.");
+            } catch (err) {
+              reject(new Error("DOCX Parsing Error: " + err.message));
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      if (fileName.endsWith(".pdf")) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            try {
+              const typedarray = new Uint8Array(event.target.result);
+              const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+              let fullText = "";
+              for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const tokenized = await page.getTextContent();
+                const pageText = tokenized.items.map(token => token.str).join(" ");
+                fullText += pageText + "\n";
+              }
+              resolve(fullText || "No readable text found in PDF.");
+            } catch (err) {
+              reject(new Error("PDF Parsing Error: " + err.message));
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      }
+      throw new Error("Unsupported file format: " + file.name);
+    }
+
+    function extractJobKeywords(jobText) {
+      const lower = jobText.toLowerCase();
+      const found = [];
+      KNOWN_TECH_KEYWORDS.forEach(kw => {
+        if (lower.includes(kw)) {
+          if (kw === "nodejs" && found.includes("node.js")) return;
+          if (kw === "nextjs" && found.includes("next.js")) return;
+          if (kw === "postgres" && found.includes("postgresql")) return;
+          if (kw === "rest api" && found.includes("rest apis")) return;
+          found.push(kw);
+        }
+      });
+      if (found.length < 3) {
+        const customTokens = jobText.match(/\b[A-Za-z][A-Za-z0-9+#.-]{2,}\b/g) || [];
+        const stopWords = new Set(["with", "from", "that", "this", "have", "must", "will", "your", "role", "work", "team", "years", "experience", "looking", "senior", "junior", "skills", "mandatory", "required", "responsibilities", "build", "design"]);
+        customTokens.forEach(tok => {
+          const clean = tok.toLowerCase().replace(/[.,;:]+$/, "");
+          if (clean.length >= 3 && !stopWords.has(clean) && !found.includes(clean) && found.length < 12) {
+            found.push(clean);
+          }
+        });
+      }
+      return found;
+    }
+
+    function extractCandidateMetadata(fileName, text) {
+      const cleanName = fileName
+        .replace(/\.(pdf|docx|txt)$/i, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\b(resume|cv|final|updated|2025|2026)\b/gi, "")
+        .trim();
+      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const phoneMatch = text.match(/(?:\+?\d{1,3}[\s-]?)?\d{5}[\s-]?\d{5}|\+?\d{1,3}[\s-]?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/);
+      const expMatch = text.match(/(\d+(?:\.\d+)?)\+?\s*(?:years|yrs)/i);
+      return {
+        displayName: cleanName || fileName,
+        email: emailMatch ? emailMatch[0] : "Not listed",
+        phone: phoneMatch ? phoneMatch[0] : "Not listed",
+        experienceYears: expMatch ? parseFloat(expMatch[1]) : null
+      };
+    }
+
+    function evaluateCandidateLocally(fileName, text, jobText, jobKeywords) {
+      const lowerText = text.toLowerCase();
+      const meta = extractCandidateMetadata(fileName, text);
+      const matchedSkills = [];
+      const missingSkills = [];
+
+      jobKeywords.forEach(kw => {
+        const displayKw = kw.toUpperCase() === kw || kw.length <= 3 ? kw.toUpperCase() : kw.charAt(0).toUpperCase() + kw.slice(1);
+        if (lowerText.includes(kw.toLowerCase())) matchedSkills.push(displayKw);
+        else missingSkills.push(displayKw);
+      });
+
+      const jobExpMatch = jobText.match(/(\d+)\+?\s*(?:years|yrs)/i);
+      const requiredYears = jobExpMatch ? parseInt(jobExpMatch[1], 10) : 2;
+      const candYears = meta.experienceYears !== null ? meta.experienceYears : 2;
+
+      const keywordRatio = jobKeywords.length > 0 ? matchedSkills.length / jobKeywords.length : 0.65;
+      const expBonus = candYears >= requiredYears ? 12 : Math.max(0, (candYears / Math.max(1, requiredYears)) * 10);
+      let rawScore = Math.round(keywordRatio * 84 + expBonus);
+      rawScore = Math.max(18, Math.min(98, rawScore));
+
+      let status = "Not Eligible";
+      if (rawScore >= 75) status = "Eligible";
+      else if (rawScore >= 50) status = "Potential Fit";
+
+      const expPhrase = meta.experienceYears !== null ? `${meta.experienceYears} yrs experience` : "Relevant background";
+      const topMatched = matchedSkills.slice(0, 4).join(", ") || "general technical skills";
+      const summary = `${expPhrase} with strong alignment in ${topMatched}. ${
+        missingSkills.length === 0
+          ? "Meets all primary technical requirements in the job description."
+          : `Covers ${matchedSkills.length}/${jobKeywords.length} core requirements; interview recommended to verify ${missingSkills.slice(0, 2).join(" & ")}.`
+      }`;
+
+      return {
+        id: fileName + "_" + Math.random().toString(36).slice(2, 7),
+        fileName,
+        displayName: meta.displayName,
+        email: meta.email,
+        phone: meta.phone,
+        experienceYears: meta.experienceYears,
+        score: rawScore,
+        status,
+        matchedSkills,
+        missingSkills,
+        summary,
+        rawText: text
+      };
+    }
+
+    async function evaluateBatchWithBackendOrFallback(batchItems, jobText, jobKeywords, useBackend) {
+      const localResults = batchItems.map(item =>
+        evaluateCandidateLocally(item.name, item.text, jobText, jobKeywords)
+      );
+      if (!useBackend) return localResults;
+
+      try {
+        const combinedResumes = batchItems.map((item, idx) =>
+          `--- Candidate File #${idx + 1}: ${item.name} ---\n${item.text.slice(0, 2500)}`
+        ).join("\n\n");
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8500);
+        const isLiveHost = window.location.protocol.startsWith("http") && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1");
+        if (!isLiveHost) return localResults;
+
+        const response = await fetch("/.netlify/functions/rank", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ job: jobText, combinedResumes, format: "json" }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) return localResults;
+        const data = await response.json();
+
+        if (Array.isArray(data.candidates) && data.candidates.length > 0) {
+          return localResults.map((loc, idx) => {
+            const aiCand = data.candidates[idx] || data.candidates.find(c => c.fileName && loc.fileName.includes(c.fileName));
+            if (!aiCand) return loc;
+            const score = typeof aiCand.score === "number" ? Math.min(99, Math.max(10, Math.round(aiCand.score))) : loc.score;
+            return {
+              ...loc,
+              score,
+              status: score >= 75 ? "Eligible" : score >= 50 ? "Potential Fit" : "Not Eligible",
+              summary: aiCand.summary || loc.summary,
+              matchedSkills: Array.isArray(aiCand.matchedSkills) && aiCand.matchedSkills.length ? aiCand.matchedSkills : loc.matchedSkills,
+              missingSkills: Array.isArray(aiCand.missingSkills) ? aiCand.missingSkills : loc.missingSkills
+            };
+          });
+        }
+        return localResults;
+      } catch (err) {
+        return localResults;
+      }
+    }
+
+    async function runCandidateRanking() {
+      const jobText = jobDescEl.value.trim();
+      if (!jobText) {
+        showToast("Please enter the job requirements or pick a template!", "error");
+        jobDescEl.focus();
+        return;
+      }
+      if (queuedFiles.length === 0) {
+        showToast("Please upload resumes or click the 12-Resume Demo button!", "error");
+        return;
+      }
+
+      const totalFiles = queuedFiles.length;
+      const useBackend = scoringModeSelect.value === "hybrid";
+      const jobKeywords = extractJobKeywords(jobText);
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.classList.add("opacity-75");
+      progressContainer.classList.remove("hidden");
+      progressBarFill.style.width = "5%";
+      progressPercentText.textContent = "5%";
+      progressStatusText.textContent = `Step 1/2: Extracting text from ${totalFiles} resume${totalFiles > 1 ? "s" : ""}...`;
+
+      try {
+        const extractedItems = [];
+        for (let i = 0; i < totalFiles; i++) {
+          const item = queuedFiles[i];
+          const pct = Math.round(((i + 1) / totalFiles) * 45);
+          progressBarFill.style.width = `${pct}%`;
+          progressPercentText.textContent = `${pct}%`;
+          progressStatusText.textContent = `Reading (${i + 1}/${totalFiles}): ${item.name}`;
+          await new Promise(r => setTimeout(r, 20));
+          const text = await extractTextFromQueueItem(item);
+          extractedItems.push({ name: item.name, text });
+        }
+
+        const BATCH_SIZE = 5;
+        const allEvaluated = [];
+        const totalBatches = Math.ceil(extractedItems.length / BATCH_SIZE);
+
+        for (let b = 0; b < totalBatches; b++) {
+          const batchSlice = extractedItems.slice(b * BATCH_SIZE, (b + 1) * BATCH_SIZE);
+          const pct = 50 + Math.round(((b + 1) / totalBatches) * 50);
+          progressBarFill.style.width = `${pct}%`;
+          progressPercentText.textContent = `${pct}%`;
+          progressStatusText.textContent = `Step 2/2: Scoring batch ${b + 1} of ${totalBatches}...`;
+          await new Promise(r => setTimeout(r, 50));
+          const batchResults = await evaluateBatchWithBackendOrFallback(batchSlice, jobText, jobKeywords, useBackend);
+          allEvaluated.push(...batchResults);
+        }
+
+        allEvaluated.sort((a, b) => b.score - a.score);
+        allEvaluated.forEach((cand, index) => { cand.rank = index + 1; });
+
+        rankedCandidates = allEvaluated;
+        renderResultsDashboard();
+        showToast(`Successfully ranked ${totalFiles} candidates!`, "success");
+      } catch (err) {
+        showToast("Error during analysis: " + err.message, "error");
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.classList.remove("opacity-75");
+        setTimeout(() => progressContainer.classList.add("hidden"), 500);
+      }
+    }
+
+    analyzeBtn.addEventListener("click", runCandidateRanking);
+
+    function getFilteredCandidates() {
+      const topN = parseInt(topNSelect.value, 10) || 10;
+      const searchQ = (candidateSearchInput.value || "").trim().toLowerCase();
+      let list = rankedCandidates.slice(0, topN);
+
+      if (activeStatusFilter === "Eligible") list = list.filter(c => c.status === "Eligible");
+      else if (activeStatusFilter === "Potential Fit") list = list.filter(c => c.status === "Potential Fit");
+      else if (activeStatusFilter === "shortlisted") list = rankedCandidates.filter(c => shortlistedIds.has(c.fileName));
+
+      if (searchQ) {
+        list = list.filter(c =>
+          c.displayName.toLowerCase().includes(searchQ) ||
+          c.fileName.toLowerCase().includes(searchQ) ||
+          c.matchedSkills.some(s => s.toLowerCase().includes(searchQ))
+        );
+      }
+      return list;
+    }
+
+    function renderResultsDashboard() {
+      if (rankedCandidates.length === 0) {
+        emptyResultsState.classList.remove("hidden");
+        resultsDashboard.classList.add("hidden");
+        return;
+      }
+      emptyResultsState.classList.add("hidden");
+      resultsDashboard.classList.remove("hidden");
+
+      const total = rankedCandidates.length;
+      const topSlice = rankedCandidates.slice(0, Math.min(10, total));
+      const avgTop = Math.round(topSlice.reduce((acc, c) => acc + c.score, 0) / topSlice.length);
+      const eligibleCount = rankedCandidates.filter(c => c.status === "Eligible").length;
+      const minutesSaved = Math.max(5, Math.round(total * 2.5));
+
+      kpiTotalScreened.textContent = String(total);
+      kpiAvgScore.textContent = `${avgTop}%`;
+      kpiEligibleCount.textContent = String(eligibleCount);
+      kpiTimeSaved.textContent = minutesSaved >= 60 ? `${(minutesSaved / 60).toFixed(1)}h` : `${minutesSaved}m`;
+
+      const topNVal = parseInt(topNSelect.value, 10);
+      const shownCount = Math.min(topNVal, total);
+      leaderboardHeading.textContent = topNVal >= 999
+        ? `📋 All ${total} Ranked Candidates`
+        : `🏆 Top ${shownCount} Deserving Candidates (out of ${total} uploaded)`;
+
+      starredCountBadge.textContent = String(rankedCandidates.filter(c => shortlistedIds.has(c.fileName)).length);
+      const visibleList = getFilteredCandidates();
+
+      if (visibleList.length === 0) {
+        candidateCardsContainer.innerHTML = `<div class="bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-500">No candidates match the current filter.</div>`;
+        candidateTableBody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No matching candidates.</td></tr>`;
+        return;
+      }
+
+      candidateCardsContainer.innerHTML = visibleList.map(cand => {
+        const isStarred = shortlistedIds.has(cand.fileName);
+        const scoreBadgeStyle = cand.score >= 75
+          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+          : cand.score >= 50
+          ? "bg-amber-50 text-amber-700 border-amber-200"
+          : "bg-rose-50 text-rose-700 border-rose-200";
+
+        const matchedHtml = cand.matchedSkills.length > 0
+          ? cand.matchedSkills.map(s => `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-medium">✓ ${escapeHtml(s)}</span>`).join("")
+          : `<span class="text-[11px] text-slate-400">No direct keyword hits</span>`;
+
+        const missingHtml = cand.missingSkills.length > 0
+          ? cand.missingSkills.slice(0, 6).map(s => `<span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-medium">✕ ${escapeHtml(s)}</span>`).join("")
+          : `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium">None — Full Match!</span>`;
+
+        return `
+          <div class="bg-white border ${isStarred ? "border-amber-400 ring-1 ring-amber-300" : "border-slate-200"} rounded-2xl p-4 sm:p-5 shadow-sm hover:border-emerald-300 transition space-y-3">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-1 rounded-xl border text-xs font-extrabold bg-slate-100 text-slate-800 border-slate-300">#${cand.rank}</span>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h4 class="text-sm sm:text-base font-bold text-slate-900">${escapeHtml(cand.displayName)}</h4>
+                    ${cand.experienceYears !== null ? `<span class="text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md">${cand.experienceYears} yrs exp</span>` : ""}
+                  </div>
+                  <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+                    <span>📄 ${escapeHtml(cand.fileName)}</span>
+                    <span>✉️ ${escapeHtml(cand.email)}</span>
+                    <span>📞 ${escapeHtml(cand.phone)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="px-3 py-1 rounded-xl border font-extrabold text-xs sm:text-sm ${scoreBadgeStyle}">
+                  ${cand.score}% Match · ${cand.status}
+                </div>
+                <button type="button" data-star-file="${escapeHtml(cand.fileName)}" class="star-candidate-btn px-2.5 py-1 rounded-xl border ${isStarred ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800"} text-xs font-bold cursor-pointer transition">
+                  ${isStarred ? "⭐ Shortlisted" : "☆ Star"}
+                </button>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${escapeHtml(cand.summary)}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Matched Skills (${cand.matchedSkills.length})</div>
+                <div class="flex flex-wrap gap-1">${matchedHtml}</div>
+              </div>
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Missing Skills / Gaps (${cand.missingSkills.length})</div>
+                <div class="flex flex-wrap gap-1">${missingHtml}</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+              <button type="button" data-inspect-file="${escapeHtml(cand.fileName)}" class="inspect-resume-btn text-emerald-700 hover:text-emerald-800 font-semibold cursor-pointer">
+                👁️ View Extracted Resume Text
+              </button>
+              ${cand.email !== "Not listed" ? `<a href="mailto:${encodeURIComponent(cand.email)}" class="text-slate-600 hover:text-emerald-700 font-semibold">✉️ Email Candidate →</a>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      candidateTableBody.innerHTML = visibleList.map(cand => `
+        <tr class="hover:bg-slate-50/80">
+          <td class="py-3 px-4 font-extrabold text-slate-900">#${cand.rank}</td>
+          <td class="py-3 px-4"><div class="font-bold text-slate-900">${escapeHtml(cand.displayName)}</div><div class="text-[11px] text-slate-500">${escapeHtml(cand.email)}</div></td>
+          <td class="py-3 px-4 text-right font-extrabold text-emerald-700">${cand.score}%</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700">${cand.status}</span></td>
+          <td class="py-3 px-4 max-w-[180px] truncate">${escapeHtml(cand.matchedSkills.join(", ") || "—")}</td>
+          <td class="py-3 px-4 max-w-[160px] truncate text-rose-600">${escapeHtml(cand.missingSkills.slice(0, 4).join(", ") || "None")}</td>
+          <td class="py-3 px-4 text-right"><button type="button" data-inspect-file="${escapeHtml(cand.fileName)}" class="inspect-resume-btn text-emerald-700 font-semibold hover:underline cursor-pointer">Inspect</button></td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll(".star-candidate-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const fname = btn.getAttribute("data-star-file");
+          if (shortlistedIds.has(fname)) shortlistedIds.delete(fname);
+          else shortlistedIds.add(fname);
+          try { localStorage.setItem("hr_shortlisted_ids", JSON.stringify(Array.from(shortlistedIds))); } catch (e) {}
+          renderResultsDashboard();
+        });
+      });
+
+      document.querySelectorAll(".inspect-resume-btn").forEach(btn => {
+        btn.addEventListener("click", () => openResumeInspector(btn.getAttribute("data-inspect-file")));
+      });
+    }
+
+    document.querySelectorAll(".status-filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeStatusFilter = btn.getAttribute("data-filter");
+        document.querySelectorAll(".status-filter-btn").forEach(b => {
+          b.className = "status-filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition";
+        });
+        btn.className = "status-filter-btn bg-slate-900 text-white text-xs font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition";
+        renderResultsDashboard();
+      });
+    });
+
+    candidateSearchInput.addEventListener("input", () => renderResultsDashboard());
+    topNSelect.addEventListener("change", () => { if (rankedCandidates.length > 0) renderResultsDashboard(); });
+
+    document.getElementById("viewCardsBtn").addEventListener("click", () => {
+      candidateCardsContainer.classList.remove("hidden");
+      candidateTableContainer.classList.add("hidden");
+    });
+    document.getElementById("viewTableBtn").addEventListener("click", () => {
+      candidateCardsContainer.classList.add("hidden");
+      candidateTableContainer.classList.remove("hidden");
+    });
+
+    function loadInstantDemo() {
+      if (!jobDescEl.value.trim()) jobDescEl.value = JOB_TEMPLATES.fullstack;
+      queuedFiles = DEMO_RESUMES.map(d => ({ name: d.name, size: d.text.length, fileObj: null, presetText: d.text }));
+      topNSelect.value = "10";
+      updateFileQueueUI();
+      runCandidateRanking();
+    }
+
+    document.getElementById("loadDemoSidebarBtn").addEventListener("click", loadInstantDemo);
+    document.getElementById("workspaceTryDemoTopBtn").addEventListener("click", loadInstantDemo);
+
+    document.getElementById("exportCsvBtn").addEventListener("click", () => {
+      const list = getFilteredCandidates();
+      if (list.length === 0) return showToast("No ranked candidates to export yet!", "error");
+      const headers = ["Rank", "Candidate Name", "Match Score (%)", "Fit Status", "Experience (Yrs)", "Email", "Phone", "Matched Skills", "Missing Skills", "AI Evaluation Summary"];
+      const rows = list.map(c => [c.rank, c.displayName, c.score, c.status, c.experienceYears ?? "N/A", c.email, c.phone, c.matchedSkills.join("; "), c.missingSkills.join("; "), c.summary]);
+      const csvContent = [headers, ...rows].map(r => r.map(cell => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Top_${list.length}_Shortlisted_Candidates.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Exported Top ${list.length} candidates to Excel CSV!`, "success");
+    });
+
+    document.getElementById("copySummaryBtn").addEventListener("click", () => {
+      const list = getFilteredCandidates();
+      if (list.length === 0) return showToast("No candidates to copy yet!", "error");
+      const lines = list.map(c => `#${c.rank} ${c.displayName} — ${c.score}% (${c.status}) | Matched: ${c.matchedSkills.join(", ")}`).join("\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(lines).then(() => showToast("Copied summary to clipboard!", "success"));
+      } else {
+        const temp = document.createElement("textarea");
+        temp.value = lines;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        showToast("Copied summary to clipboard!", "success");
+      }
+    });
+
+    const resumeModal = document.getElementById("resumeModal");
+    function openResumeInspector(fileName) {
+      const cand = rankedCandidates.find(c => c.fileName === fileName);
+      if (!cand) return;
+      document.getElementById("modalCandidateTitle").textContent = `#${cand.rank} ${cand.displayName} (${cand.score}% Match)`;
+      document.getElementById("modalCandidateMeta").textContent = `${cand.fileName} · ${cand.email} · ${cand.phone}`;
+      document.getElementById("modalSkillsSummary").innerHTML = cand.matchedSkills.map(s => `<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">✓ ${escapeHtml(s)}</span>`).join("");
+      document.getElementById("modalResumeBody").textContent = cand.rawText;
+      resumeModal.classList.remove("hidden");
+      resumeModal.classList.add("flex");
+    }
+    function closeResumeInspector() {
+      resumeModal.classList.add("hidden");
+      resumeModal.classList.remove("flex");
+    }
+    document.getElementById("closeResumeModalBtn").addEventListener("click", closeResumeInspector);
+    document.getElementById("closeResumeModalBottomBtn").addEventListener("click", closeResumeInspector);
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

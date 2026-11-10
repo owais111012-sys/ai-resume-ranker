@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How AI & ATS Resume Scoring Works in 2026 — AI Resume Ranker HR Guide</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+  <meta name="description" content="An in-depth technical guide for HR professionals and recruiters on how Applicant Tracking Systems (ATS) and LLM resume rankers parse, weight, and score candidate resumes.">
+  <link rel="canonical" href="https://resume-ranker-app.netlify.app/ats-guide.html">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Google AdSense Verification Code -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1941533215479134" crossorigin="anonymous"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <style>body { font-family: 'Inter', system-ui, sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Top Bar -->
+  <div class="bg-slate-900 text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <span>📚 AI Resume Ranker — HR Recruitment Knowledge Hub</span>
+      <div class="flex items-center gap-4 text-[11px] text-slate-400">
+        <a href="privacy.html" class="text-emerald-400 hover:underline">Privacy Policy</a>
+        <a href="terms.html" class="text-slate-300 hover:underline">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm">AI</div>
+        <div>
+          <span class="text-lg font-extrabold tracking-tight text-slate-900">AI Resume Ranker</span>
+          <p class="text-xs text-slate-500">Bulk Candidate Screening &amp; Recruitment Hub</p>
+        </div>
+      </a>
+      <nav class="flex flex-wrap items-center gap-1 sm:gap-2 text-xs font-semibold">
+        <a href="index.html" class="text-slate-700 hover:text-emerald-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">Screening Tool</a>
+        <a href="ats-guide.html" class="text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg">ATS Scoring Guide</a>
+        <a href="job-description-templates.html" class="text-slate-700 hover:text-emerald-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">JD Templates</a>
+        <a href="interview-scorecard.html" class="text-slate-700 hover:text-emerald-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">Interview Rubric</a>
+        <a href="about.html" class="text-slate-700 hover:text-emerald-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">About &amp; Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Article Content -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <article class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-sm space-y-6 text-slate-700 leading-relaxed text-sm sm:text-base">
+      <div class="border-b border-slate-200 pb-6 space-y-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+          Technical Recruiting Deep-Dive
+        </span>
+        <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          How Applicant Tracking Systems (ATS) &amp; AI Resume Scoring Work in 2026
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500">
+          Written for HR Managers, Talent Acquisition Leads &amp; Hiring Founders · Reading time: 8 minutes
+        </p>
+      </div>
+
+      <p>
+        Every week, corporate talent acquisition teams and startup founders face the same operational bottleneck: a single remote software engineering or data analyst job posting receives between 150 and 600 resumes within days. Reading 200 two-page PDFs manually requires nearly <strong>10 hours of uninterrupted reading time</strong>. To solve this without sacrificing fairness, modern HR teams rely on a combination of deterministic Applicant Tracking System (ATS) parsing and Large Language Model (LLM) semantic evaluation.
+      </p>
+
+      <h2 class="text-xl font-extrabold text-slate-900 pt-2">1. Stage One: Document Parsing &amp; Text Normalization</h2>
+      <p>
+        Before any scoring algorithm can evaluate a candidate, the raw binary file (<code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">.pdf</code> or <code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">.docx</code>) must be converted into clean, structured UTF-8 text. Legacy ATS platforms often failed when applicants used two-column layouts, tables, or custom icons, causing experienced engineers to be rejected simply because their text streams were scrambled.
+      </p>
+      <p>
+        Modern browser-based parsers—such as Mozilla's <strong>PDF.js</strong> for portable documents and <strong>Mammoth.js</strong> for Word XML archives—extract text tokens page by page, normalizing whitespace and stripping decorative graphics. This ensures that a candidate who writes a clean single-column Word document and a candidate who exports a LaTeX or Canva PDF are judged strictly on their qualifications.
+      </p>
+
+      <h2 class="text-xl font-extrabold text-slate-900 pt-2">2. Stage Two: Keyword Matching vs. Semantic AI Evaluation</h2>
+      <p>
+        Historically, first-generation resume rankers relied purely on exact string matching (TF-IDF or boolean keyword counts). If a job description asked for <em>"PostgreSQL"</em> and <em>"REST APIs"</em>, a candidate who wrote <em>"Postgres database optimization"</em> and <em>"RESTful microservices"</em> might receive a lower score. Furthermore, candidates could game legacy systems by hiding white-text keywords in the footer of their PDF.
+      </p>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-4 space-y-3">
+        <h3 class="text-base font-bold text-slate-900">How Hybrid Scoring Solves the Keyword Trap</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-900 mb-1">Deterministic ATS Layer</div>
+            <p class="text-slate-600">Instantly verifies mandatory hard skills, programming languages, certifications, email addresses, phone numbers, and explicit years of experience.</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-emerald-700 mb-1">Contextual LLM Layer (Groq AI)</div>
+            <p class="text-slate-600">Reads bullet points under work history to verify whether skills were used in real production environments, summarizing strengths and skill gaps.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-extrabold text-slate-900 pt-2">3. Understanding the 0–100% Match Score Breakdown</h2>
+      <p>
+        When you upload a batch of resumes into <a href="index.html" class="text-emerald-700 font-bold underline">AI Resume Ranker</a>, each applicant receives a composite score from 0% to 100% and is categorized into one of three actionable tiers:
+      </p>
+      <ul class="list-disc list-inside space-y-2 pl-2">
+        <li><strong>Eligible Fit (75% – 100% Match):</strong> The candidate satisfies nearly all core technical requirements and meets or exceeds the target experience level. These candidates should be prioritized for your Top 10 interview shortlist.</li>
+        <li><strong>Potential Fit (50% – 74% Match):</strong> The candidate possesses strong foundational skills (for example, strong React and JavaScript experience) but is missing 1 or 2 secondary tools (such as Docker or AWS) that could be learned on the job.</li>
+        <li><strong>Not Eligible (&lt;50% Match):</strong> The resume targets a different specialization or seniority tier than the role requires.</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold text-slate-900 pt-2">4. Preventing Bias &amp; Protecting Candidate Privacy</h2>
+      <p>
+        Ethical AI recruitment requires two non-negotiable guardrails: <strong>human-in-the-loop review</strong> and <strong>strict data privacy</strong>. Automated ranking should never be used to make a final hiring decision without human oversight; rather, its purpose is to surface the top 10 to 20% of applicants so recruiters can read those resumes thoroughly and conduct structured interviews.
+      </p>
+      <p>
+        Equally important, resumes contain sensitive personal identifiable information (PII) including home addresses, phone numbers, and employment histories. Our architecture processes text extraction inside the recruiter's browser and performs scoring ephemerally in memory—meaning candidate files are never archived in a database or used to train third-party models.
+      </p>
+
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 mt-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-extrabold text-emerald-950">Ready to Screen Your Applicant Folder?</h3>
+          <p class="text-xs sm:text-sm text-emerald-800">Upload up to 100+ PDF, DOCX, or TXT resumes and get your Top 10 shortlist in seconds.</p>
+        </div>
+        <a href="index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm transition">
+          Launch AI Resume Ranker →
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 px-4 text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div>© 2026 <strong class="text-slate-800">AI Resume Ranker</strong>. All rights reserved.</div>
+      <div class="flex flex-wrap items-center gap-4">
+        <a href="index.html" class="hover:text-emerald-600">Home Tool</a>
+        <a href="job-description-templates.html" class="hover:text-emerald-600">JD Templates</a>
+        <a href="interview-scorecard.html" class="hover:text-emerald-600">Interview Scorecard</a>
+        <a href="about.html" class="hover:text-emerald-600">About</a>
+        <a href="privacy.html" class="hover:text-emerald-600">Privacy Policy</a>
+        <a href="terms.html" class="hover:text-emerald-600">Terms</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
